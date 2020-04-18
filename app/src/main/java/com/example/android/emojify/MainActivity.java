@@ -28,8 +28,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
+// import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,10 +42,12 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
 
-    private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
+    // private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
 
     private ImageView mImageView;
 
@@ -139,9 +142,17 @@ public class MainActivity extends AppCompatActivity {
                 mTempPhotoPath = photoFile.getAbsolutePath();
 
                 // Get the content URI for the image file
-                Uri photoURI = FileProvider.getUriForFile(this,
+                /* Uri photoURI = FileProvider.getUriForFile(this,
                         FILE_PROVIDER_AUTHORITY,
-                        photoFile);
+                        photoFile); */
+
+                // Workaround to get the content URI for the image file
+                /*
+                    On API 17 tablet, the camera app doesn't seem to
+                     recognise Emojify's File Provider and thus no
+                     photo is captured and displayed.
+                 */
+                Uri photoURI = Uri.fromFile(photoFile);
 
                 // Add the URI so the camera can store the image
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -160,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
             // Process the image and set it to the TextView
             processAndSetImage();
         } else {
+
+            Log.d(TAG, "request code is: " + requestCode
+            + ", result code is: " + resultCode + ", data is: " + data);
 
             // Otherwise, delete the temporary image file
             BitmapUtils.deleteImageFile(this, mTempPhotoPath);
