@@ -69,10 +69,12 @@ public class Emojifier {
         }
         else
         {
+            // Iterate through the faces
             for (int i = 0; i < numFaces; i++)
             {
                 Face thisFace = faces.valueAt(i);
 
+                // Get the appropriate emoji for each face
                 whichEmoji(thisFace);
             }
         }
@@ -84,7 +86,10 @@ public class Emojifier {
     /**
      * Method for logging the classification probabilities.
      *
-     * @param face The face to get the classification probabilities.
+     * Determines the closest emoji to the expression on the face, based on the
+     * odds that the person is smiling and has each eye open.
+     *
+     * @param face The face for which you pick an emoji.
      */
     private static void whichEmoji(Face face)
     {
@@ -97,85 +102,72 @@ public class Emojifier {
         Log.d(TAG, "Probability right eye open: " + rightEyeOpenProb);
         Log.d(TAG, "Probability smiling: " + smilingProb);
 
-        double LEFT_EYE_CLOSED_THRESHOLD = 0.5;
-        double RIGHT_EYE_CLOSED_THRESHOLD = 0.5;
+        double LEFT_EYE_OPEN_THRESHOLD = 0.5;
+        double RIGHT_EYE_OPEN_THRESHOLD = 0.5;
         double SMILING_THRESHOLD = 0.5;
 
         boolean leftEyeOpen;
         boolean rightEyeOpen;
-        boolean isSmiling;
+        boolean smiling;
 
-        if (leftEyeOpenProb > LEFT_EYE_CLOSED_THRESHOLD)
-        {
-            leftEyeOpen = true;
-        }
-        else
-        {
-            leftEyeOpen = false;
-        }
-        if (rightEyeOpenProb > RIGHT_EYE_CLOSED_THRESHOLD)
-        {
-            rightEyeOpen = true;
-        }
-        else {
-            rightEyeOpen = false;
-        }
-        if (smilingProb > SMILING_THRESHOLD)
-        {
-            isSmiling = true;
-        }
-        else
-        {
-            isSmiling = false;
-        }
+        leftEyeOpen = leftEyeOpenProb > LEFT_EYE_OPEN_THRESHOLD;
+        rightEyeOpen = rightEyeOpenProb > RIGHT_EYE_OPEN_THRESHOLD;
+        smiling = smilingProb > SMILING_THRESHOLD;
 
-        // initialize emoji to smiling
-        Emoji emoji = Emoji.SMILING;
-        if (leftEyeOpen && rightEyeOpen && isSmiling)
+        // Determine and log the appropriate emoji
+        Emoji emoji;
+        if (leftEyeOpen && rightEyeOpen && smiling)
         {
-             emoji = Emoji.SMILING;
+             emoji = Emoji.SMILE;
         }
-        else if (leftEyeOpen && rightEyeOpen && !isSmiling)
+        else if (leftEyeOpen && rightEyeOpen && !smiling)
         {
-            emoji = Emoji.FROWNING;
+            emoji = Emoji.FROWN;
         }
-        else if (!leftEyeOpen && rightEyeOpen && isSmiling)
+        else if (!leftEyeOpen && rightEyeOpen && smiling)
         {
             emoji = Emoji.LEFT_WINK;
         }
-        else if (leftEyeOpen && !rightEyeOpen && isSmiling)
+        else if (leftEyeOpen && !rightEyeOpen && smiling)
         {
             emoji = Emoji.RIGHT_WINK;
         }
-        else if (!leftEyeOpen && rightEyeOpen && !isSmiling)
+        else if (!leftEyeOpen && rightEyeOpen && !smiling)
         {
-            emoji = Emoji.LEFT_WINK_FROWNING;
+            emoji = Emoji.LEFT_WINK_FROWN;
         }
-        else if (leftEyeOpen && !rightEyeOpen && !isSmiling)
+        else if (leftEyeOpen && !rightEyeOpen && !smiling)
         {
-            emoji = Emoji.RIGHT_WINK_FROWNING;
+            emoji = Emoji.RIGHT_WINK_FROWN;
         }
-        else if (!leftEyeOpen && !rightEyeOpen && isSmiling)
+        else if (!leftEyeOpen && !rightEyeOpen && smiling)
         {
-            emoji = Emoji.CLOSED_EYE_SMILING;
+            emoji = Emoji.CLOSED_EYE_SMILE;
         }
-        else if (!leftEyeOpen && !rightEyeOpen && !isSmiling)
+        else if (!leftEyeOpen && !rightEyeOpen && !smiling)
         {
-            emoji = Emoji.CLOSED_EYE_FROWNING;
+            emoji = Emoji.CLOSED_EYE_FROWN;
+        }
+        else
+        {
+            // default emoji is smiling
+            emoji = Emoji.SMILE;
         }
 
+        // Log the chosen Emoji
         Log.d(TAG, "Emoji is " + emoji);
     }
 
-    enum Emoji {
-        SMILING,
-        FROWNING,
+    // Enum for all possible Emojis
+    private enum Emoji {
+        SMILE,
+        FROWN,
         LEFT_WINK,
         RIGHT_WINK,
-        LEFT_WINK_FROWNING,
-        RIGHT_WINK_FROWNING,
-        CLOSED_EYE_SMILING,
-        CLOSED_EYE_FROWNING
+        LEFT_WINK_FROWN,
+        RIGHT_WINK_FROWN,
+        CLOSED_EYE_SMILE,
+        CLOSED_EYE_FROWN
     }
 
     /*static Bitmap detectBoundingRectangles(Context context, Bitmap picture)
