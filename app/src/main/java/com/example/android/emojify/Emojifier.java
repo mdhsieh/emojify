@@ -18,39 +18,40 @@ public class Emojifier {
      * Method for detecting faces in a bitmap.
      *
      * @param context The application context.
-     * @param picture The picture in which to detect the faces.
+     * @param bitmap The picture in which to detect the faces.
      */
-    public static void detectFaces(Context context, Bitmap bitmap)
+    static void detectFaces(Context context, Bitmap bitmap)
     {
+        // Create the face detector, disable tracking and enable classifications
         FaceDetector detector = new FaceDetector.Builder(context)
                 .setTrackingEnabled(false)
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
+                .setLandmarkType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
         if (!detector.isOperational()) {
             // The face detector is not operational.
-            Toast.makeText(context, "Could not set up the face detector!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.detector_not_operational, Toast.LENGTH_SHORT).show();
             Log.d(TAG, "The required native library to do face detection is not available");
         }
 
+        // Build the frame
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
 
+        // Detect the faces
         SparseArray<Face> faces = detector.detect(frame);
 
-        int numFaces = 0;
+        int numFaces = faces.size();
 
-        for (int i = 0; i < faces.size(); ++i) {
-            numFaces++;
-        }
-
+        // Log the number of faces
         Log.d(TAG, "Number of faces detected: " + numFaces);
 
+        // If there are no faces detected, show a Toast message
         if (numFaces == 0)
         {
-            Toast.makeText(context, "No Faces Detected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.no_faces_detected, Toast.LENGTH_SHORT).show();
         }
 
-        // release the detector instance once it is no longer needed
+        // Release the detector object once it is no longer needed
         detector.release();
     }
 }

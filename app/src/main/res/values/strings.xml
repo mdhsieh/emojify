@@ -23,4 +23,6 @@
     <string name="go">GO</string>
     <string name="permission_denied">Permission denied</string>
     <string name="imageview_description">The imageview that contains the emojified picture</string>
+    <string name="no_faces_detected">No Faces Detected</string>
+    <string name="detector_not_operational">Could not set up the face detector!</string>
 </resources>
