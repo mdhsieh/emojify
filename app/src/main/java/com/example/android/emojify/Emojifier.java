@@ -18,9 +18,9 @@ public class Emojifier {
      * Method for detecting faces in a bitmap.
      *
      * @param context The application context.
-     * @param bitmap The picture in which to detect the faces.
+     * @param picture The picture in which to detect the faces.
      */
-    static void detectFaces(Context context, Bitmap bitmap)
+    static void detectFaces(Context context, Bitmap picture)
     {
         // Create the face detector, disable tracking and enable classifications
         FaceDetector detector = new FaceDetector.Builder(context)
@@ -35,7 +35,7 @@ public class Emojifier {
         }
 
         // Build the frame
-        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        Frame frame = new Frame.Builder().setBitmap(picture).build();
 
         // Detect the faces
         SparseArray<Face> faces = detector.detect(frame);
@@ -50,8 +50,41 @@ public class Emojifier {
         {
             Toast.makeText(context, R.string.no_faces_detected, Toast.LENGTH_SHORT).show();
         }
+        else
+        {
+            for (int i = 0; i < numFaces; i++)
+            {
+                Face thisFace = faces.valueAt(i);
+
+                getClassifications(thisFace);
+
+                /*float x1 = thisFace.getPosition().x;
+                float y1 = thisFace.getPosition().y;
+                float x2 = x1 + thisFace.getWidth();
+                float y2 = y1 + thisFace.getHeight();
+                Log.d(TAG, "x and y of bounding rectangle's top left corner: " + x1 + ", " + y1);
+                Log.d(TAG, "width and height of bounding rectangle: " + x2 + ", " + y2);*/
+            }
+        }
 
         // Release the detector object once it is no longer needed
         detector.release();
+    }
+
+    /**
+     * Method for logging the classification probabilities.
+     *
+     * @param face The face to get the classification probabilities.
+     */
+    private static void getClassifications(Face face)
+    {
+        float leftEyeOpenProb = face.getIsLeftEyeOpenProbability();
+        float rightEyeOpenProb = face.getIsRightEyeOpenProbability();
+        float smilingProb = face.getIsSmilingProbability();
+
+        // Log all the probabilities
+        Log.d(TAG, "Probability left eye open: " + leftEyeOpenProb);
+        Log.d(TAG, "Probability right eye open: " + rightEyeOpenProb);
+        Log.d(TAG, "Probability smiling: " + smilingProb);
     }
 }
