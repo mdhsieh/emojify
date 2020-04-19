@@ -28,9 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-// import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -42,12 +40,8 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_STORAGE_PERMISSION = 1;
-
-    // private static final String FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider";
 
     private ImageView mImageView;
 
@@ -141,11 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 // Get the path of the temporary file
                 mTempPhotoPath = photoFile.getAbsolutePath();
 
-                // Get the content URI for the image file
-                /* Uri photoURI = FileProvider.getUriForFile(this,
-                        FILE_PROVIDER_AUTHORITY,
-                        photoFile); */
-
                 // Workaround to get the content URI for the image file
                 /*
                     On API 17 tablet, the camera app doesn't seem to
@@ -167,13 +156,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // If the image capture activity was called and was successful
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // Process the image and set it to the TextView
             processAndSetImage();
         } else {
-
-            Log.d(TAG, "request code is: " + requestCode
-            + ", result code is: " + resultCode + ", data is: " + data);
 
             // Otherwise, delete the temporary image file
             BitmapUtils.deleteImageFile(this, mTempPhotoPath);
@@ -194,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Resample the saved image to fit the ImageView
         mResultsBitmap = BitmapUtils.resamplePic(this, mTempPhotoPath);
+
+        Emojifier.detectFaces(this, mResultsBitmap);
 
         // Set the new bitmap to the ImageView
         mImageView.setImageBitmap(mResultsBitmap);
