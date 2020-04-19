@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         mResultsBitmap = BitmapUtils.resamplePic(this, mTempPhotoPath);
 
         Emojifier.detectFaces(this, mResultsBitmap);
+        //mResultsBitmap = Emojifier.detectBoundingRectangles(this, mResultsBitmap);
 
         // Set the new bitmap to the ImageView
         mImageView.setImageBitmap(mResultsBitmap);

@@ -25,4 +25,5 @@
     <string name="imageview_description">The imageview that contains the emojified picture</string>
     <string name="no_faces_detected">No Faces Detected</string>
     <string name="detector_not_operational">Could not set up the face detector!</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 </resources>
